@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Offer Management Anagram Checker</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --green: #10b981;
+      --red: #ef4444;
+      --gray: #6b7280;
+      --border: #e5e7eb;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      margin: 0;
+      padding: 2rem;
+      display: flex;
+      justify-content: center;
+    }
+
+    .container {
+      background: var(--card);
+      padding: 2rem;
+      border-radius: 1.5rem;
+      max-width: 600px;
+      width: 100%;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+    }
+
+    h2 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      color: #111827;
+    }
+
+    .base-phrase {
+      color: var(--gray);
+      font-size: 0.95rem;
+      margin-bottom: 1.5rem;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      font-size: 1rem;
+      border:  1px solid var(--border);
+      border-radius: 0.75rem;
+      margin-bottom: 1rem;
+    }
+
+    button {
+      background: #3b82f6;
+      color: white;
+      padding: 0.6rem 1.2rem;
+      font-size: 1rem;
+      border: none;
+      border-radius: 0.75rem;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background: #2563eb;
+    }
+
+    .result {
+      margin-top: 1.2rem;
+      font-size: 1.1rem;
+      font-weight: 500;
+    }
+
+    .correct {
+      color: var(--green);
+    }
+
+    .wrong {
+      color: var(--red);
+    }
+
+    .history {
+      margin-top: 2rem;
+      border-top: 1px solid var(--border);
+      padding-top: 1rem;
+    }
+
+    .history-title {
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: #1f2937;
+    }
+
+    .history-list {
+      list-style: none;
+      padding-left: 1rem;
+    }
+
+    .history-list li {
+      padding: 0.2rem 0;
+      color: var(--gray);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h2>Anagram Checker</h2>
+    <div class="base-phrase">Base phrase: <strong>"offer management"</strong></div>
+
+    <input type="text" id="inputWord" placeholder="Type your anagram guess..." />
+    <button onclick="checkAnagram()">Check</button>
+
+    <div class="result" id="result"></div>
+
+    <div class="history" id="history">
+      <div class="history-title">✅ Correct Attempts</div>
+      <ul class="history-list" id="correctList"></ul>
+    </div>
+  </div>
+
+  <script>
+    const basePhrase = "offer management";
+
+    function normalize(str) {
+      return str.toLowerCase().replace(/[^a-z]/g, '');
+    }
+
+    function countLetters(str) {
+      const count = {};
+      for (let char of normalize(str)) {
+        count[char] = (count[char] || 0) + 1;
+      }
+      return count;
+    }
+
+    function isValidPartialAnagram(input, base) {
+      const inputCount = countLetters(input);
+      const baseCount = countLetters(base);
+
+      for (let char in inputCount) {
+        if (!baseCount[char] || inputCount[char] > baseCount[char]) {
+          return false;
+        }
+      }
+      return true;
+    }
+
+    function checkAnagram() {
+      const input = document.getElementById("inputWord").value.trim();
+      const resultDiv = document.getElementById("result");
+      const correctList = document.getElementById("correctList");
+
+      if (!input) {
+        resultDiv.innerHTML = `<span class="wrong">⚠️ Please enter a word or phrase.</span>`;
+        return;
+      }
+
+      if (isValidPartialAnagram(input, basePhrase)) {
+        resultDiv.innerHTML = `<span class="correct">✅ "${input}" is a valid anagram!</span>`;
+
+        const existing = Array.from(correctList.children).map(li => li.textContent);
+        if (!existing.includes(input)) {
+          const li = document.createElement("li");
+          li.textContent = input;
+          correctList.appendChild(li);
+        }
+      } else {
+        resultDiv.innerHTML = `<span class="wrong">❌ "${input}" is NOT a valid anagram.</span>`;
+      }
+
+      document.getElementById("inputWord").value = '';
+    }
+  </script>
+
+</body>
+</html>
